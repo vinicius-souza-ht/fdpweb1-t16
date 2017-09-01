@@ -1,6 +1,8 @@
 package br.com.fabricadeprogramador.fabricaweb.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,24 +10,60 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(urlPatterns="/usucontroller")
-public class UsuarioController extends HttpServlet{
+import br.com.fabricadeprogramador.fabricaweb.model.Usuario;
+
+@WebServlet(urlPatterns = "/usucontroller")
+public class UsuarioController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	
+
+	private List<Usuario> lista = new ArrayList<Usuario>();
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		String email = req.getParameter("email");
-		
-		resp.getWriter().print("Olá " + email + " metodo GET");
+
+		String json = "[";
+		for (int i = 0; i < lista.size(); i++) {
+
+			json += "{ nome:" + lista.get(i).getNome() + "  , email: " + lista.get(i).getEmail() + "  }";
+			if (i < lista.size() - 1)
+				json += ",";
+		}
+		json += "]";
+
+		resp.getWriter().print(json);
 	}
-	
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-String email = req.getParameter("email");
-		
-		resp.getWriter().print("Olá " + email + " metodo POST");
+		// Captura os parâmetros vindos da requisição
+		String nome = req.getParameter("nome");
+		String email = req.getParameter("email");
+
+		Usuario usuario = new Usuario(nome, email);
+
+		lista.add(usuario);
+
+		resp.getWriter().println("{ nome:" + usuario.getNome() + "  , email: " + usuario.getEmail() + "  } ");
 	}
-	
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// Captura os parâmetros vindos da requisição
+		int index = Integer.parseInt(req.getParameter("i"));
+		String nome = req.getParameter("nome");
+		String email = req.getParameter("email");
+		
+		Usuario usuario = lista.get(index);
+		usuario.setNome(nome);
+		usuario.setEmail(email);
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		int index = Integer.parseInt(req.getParameter("i"));
+
+		lista.remove(index);
+	}
+
 }
