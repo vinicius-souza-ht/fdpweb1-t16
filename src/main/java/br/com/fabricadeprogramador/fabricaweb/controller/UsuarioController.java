@@ -2,6 +2,7 @@ package br.com.fabricadeprogramador.fabricaweb.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -50,13 +51,18 @@ public class UsuarioController extends HttpServlet {
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// Captura os parâmetros vindos da requisição
-		int index = Integer.parseInt(req.getParameter("i"));
+		String posicao = req.getParameter("i");
+		// capturando o indice do objeto a ser alterado
+		Integer i = Integer.parseInt(posicao);
+
 		String nome = req.getParameter("nome");
 		String email = req.getParameter("email");
+
+		// Acessando o objeto e alterando os dados
+		Usuario usu = lista.get(i);
+		usu.setNome(nome);
+		usu.setEmail(email);
 		
-		Usuario usuario = lista.get(index);
-		usuario.setNome(nome);
-		usuario.setEmail(email);
 	}
 
 	@Override

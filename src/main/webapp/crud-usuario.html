@@ -10,9 +10,10 @@
 <body>
 	<form action="javascript:void(0)" onsubmit="app.salvar()">
 
-		<input type="text" id="add-nome" placeholder="Novo Usuário"> <input
-			type="submit" value="Salvar"> <input type="button"
-			value="Cancelar" onclick="app.novo()">
+		<input type="text" id="add-nome" placeholder="Nome"> 
+		<input type="text" id="add-email" placeholder="Email">
+		<input type="submit" value="Salvar"> 
+		<input type="button" value="Cancelar" onclick="app.novo()">
 
 	</form>
 
@@ -31,7 +32,8 @@
 <script>
 	var app = new function() {
 
-		this.usuarios = [ 'Jão', 'Maria', 'Zé' ];
+		this.elUsuarios = document.getElementById("usuarios");
+		this.usuarios = [];
 		this.itemEditar = -1;
 
 		this.contar = function(qtd) {
@@ -51,8 +53,10 @@
 		this.salvar = function() {
 
 			var elNome = document.getElementById("add-nome");
-			var usuario = elNome.value;
-
+			var elEmail = document.getElementById("add-email");
+			
+			var usuario =  {nome:elNome.value,email:elEmail.value};
+			
 			if (usuario) {
 				if (this.itemEditar == -1) {
 
@@ -63,16 +67,17 @@
 						//processou com sucesso
 						if (this.readyState == 4 && this.status == 200) {
 							//inserindo no vetor
-							app.usuarios.push(usuario);
+							//app.usuarios.push(usuario);
+							app.listarTodos();
+							app.novo();
 						}
 					}
 
 					//Faz o request
 					xhttp.open("POST", "usucontroller", true);
 					//Formato dos dados para envio
-					xhttp.setRequestHeader("Content-type",
-							"application/x-www-form-urlencoded");
-					xhttp.send("nome=" + usuario);
+					xhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+					xhttp.send("nome="+usuario.nome+"&email="+usuario.email);
 
 				} else {
 
@@ -83,19 +88,24 @@
 						//processou com sucesso
 						if (this.readyState == 4 && this.status == 200) {
 							//Altera quando tem alguem para alterar
-							this.usuarios.splice(app.itemEditar, 1, usuario
-									.trim());
+							//app.usuarios.splice(app.itemEditar, 1, usuario);
+							app.listarTodos();
 						}
 					};
 					
+					params ="i="+this.itemEditar+"&nome="+usuario.nome+"&email="+usuario.email;
+
+					
 					//Faz o request
-					xhttp.open("PUT", "usucontroller", true);
+					xhttp.open("PUT", "usucontroller?" + params, true);
 					//Formato dos dados para envio
 					xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-					xhttp.send("i=" + this.itemEditar + "&nome=" + usuario);
+					xhttp.send();
 					
 					this.itemEditar = -1;
 				}
+				
+				this.novo();
 
 			}
 
@@ -104,7 +114,7 @@
 		}
 
 		this.excluir = function(item) {
-			this.usuarios.splice(item, 1);
+			//this.usuarios.splice(item, 1);
 			this.listarTodos();
 		}
 
@@ -118,21 +128,38 @@
 		}
 
 		this.listarTodos = function() {
-			var dados = '';
+			var xhttp = new XMLHttpRequest();
+			
+			//callback
+            xhttp.onreadystatechange = function() {
+                //processou com sucesso
+                if (this.readyState == 4 && this.status == 200) {
+                        //inserindo no vetor
+                        //JSON.parse(ajaxResponse);
+                        app.usuarios = eval(this.responseText);
+                }
+            };
+            
+            //Faz o request
+            xhttp.open("GET", "usucontroller", true);
+            xhttp.send(); 
 
-			for (var i = 0; i < this.usuarios.length; i++) {
-				dados += '<tr>';
-				dados += '<td>' + this.usuarios[i] + '</td>';
-				dados += '<td><button onclick="app.excluir(' + i
-						+ ')">Excluir</button></td>';
-				dados += '<td><button onclick="app.editar(' + i
-						+ ')">Editar</button></td>';
-
-				dados += '</tr>';
-			}
-
-			this.contar(this.usuarios.length);
-			document.getElementById("usuarios").innerHTML = dados;
+          //gera String em formato tabela
+          var dados = '';
+          
+          for (i = 0; i < this.usuarios.length; i++){
+        	  dados+='<tr>';
+              dados+='<td>'+this.usuarios[i].nome+'</td>';
+              dados+='<td>'+this.usuarios[i].email+'</td>';
+              dados+='<td><button onclick="app.excluir('+i+')">excluir</button></td>';
+              dados+='<td><button onclick="app.editar('+i+')">editar</button></td>';
+            
+              dados+="</tr>";
+          }
+        //atualiza contador
+          this.contar(this.usuarios.length);
+          //atualizar DOM
+          this.elUsuarios.innerHTML= dados;
 		}
 
 		this.novo = function() {
