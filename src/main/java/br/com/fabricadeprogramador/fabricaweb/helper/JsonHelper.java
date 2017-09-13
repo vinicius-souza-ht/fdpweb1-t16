@@ -50,12 +50,13 @@ public class JsonHelper {
 				json.append(":");
 				json.append(valor);
 				
-				if (qtdGetter  <  metodos.length-qtdGetter )
+//				if (qtdGetter  <  metodos.length-qtdGetter )
 					json.append(",");
 				
 			}
 		}
 		
+		json.deleteCharAt(json.lastIndexOf(","));
 		json.append("}");
 		return json.toString();
 		

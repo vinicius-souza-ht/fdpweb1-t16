@@ -1,8 +1,8 @@
 package br.com.fabricadeprogramador.fabricaweb.controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.fabricadeprogramador.fabricaweb.helper.JsonHelper;
 import br.com.fabricadeprogramador.fabricaweb.model.Usuario;
 
 @WebServlet(urlPatterns = "/usucontroller")
@@ -18,21 +19,30 @@ public class UsuarioController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<Usuario> lista = new ArrayList<Usuario>();
+	private List<Usuario> lista = new ArrayList<>();
+	private JsonHelper helper = new JsonHelper();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		String json = "[";
-		for (int i = 0; i < lista.size(); i++) {
-
-			json += "{ nome:" + lista.get(i).getNome() + "  , email: " + lista.get(i).getEmail() + "  }";
-			if (i < lista.size() - 1)
-				json += ",";
+//		String json = "[";
+//		for (int i = 0; i < lista.size(); i++) {
+//
+//			json += "{ nome:" + lista.get(i).getNome() + "  , email: " + lista.get(i).getEmail() + "  }";
+//			if (i < lista.size() - 1)
+//				json += ",";
+//		}
+//		json += "]";
+		
+		String json;
+		try {
+			
+			json = helper.gerarJsonLista(lista);
+			resp.getWriter().print(json);
+			
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+			e.printStackTrace();
 		}
-		json += "]";
-
-		resp.getWriter().print(json);
 	}
 
 	@Override
