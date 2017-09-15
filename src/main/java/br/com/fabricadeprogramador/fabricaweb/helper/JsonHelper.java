@@ -34,7 +34,7 @@ public class JsonHelper {
 		
 		StringBuffer json=new StringBuffer("{");
 		
-		int qtdGetter=0;
+		int qtdGetter = 0;
 		for (int i = 0; i < metodos.length; i++) {
 			
 			//se tem a palavra get no nome do metodo
@@ -46,9 +46,9 @@ public class JsonHelper {
 				
 				Object valor =  metodos[i].invoke(o);
 			
-				json.append(propriedade.toLowerCase());
+				json.append("\"" + propriedade.toLowerCase() + "\"");
 				json.append(":");
-				json.append(valor);
+				json.append("\"" + valor + "\"");
 				
 //				if (qtdGetter  <  metodos.length-qtdGetter )
 					json.append(",");

@@ -41,11 +41,13 @@ public class Usuario {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	
 	
 	//toString
-
 	@Override
 	public String toString() {
-		return "Usuario [nome=" + nome + ", email=" + email + "]";
+		return "Usuario [id=" + id + ", nome=" + nome + ", email=" + email + "]";
 	}
+
 }
