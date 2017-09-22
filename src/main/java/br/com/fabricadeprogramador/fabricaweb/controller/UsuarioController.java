@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.com.fabricadeprogramador.fabricaweb.helper.JsonHelper;
 import br.com.fabricadeprogramador.fabricaweb.model.Usuario;
+import br.com.fabricadeprogramador.fabricaweb.repository.UsuarioRepositoryBanco;
 import br.com.fabricadeprogramador.fabricaweb.repository.UsuarioRepositoryList;
 
 @WebServlet(urlPatterns = "/usucontroller")
@@ -22,7 +23,7 @@ public class UsuarioController extends HttpServlet {
 
 	private JsonHelper helper = new JsonHelper();
 	
-	private UsuarioRepositoryList usuarioRepository = new UsuarioRepositoryList();
+	private UsuarioRepositoryBanco usuarioRepository = new UsuarioRepositoryBanco();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
